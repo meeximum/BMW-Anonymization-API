@@ -104,18 +104,20 @@ def get_available_methods():
 
 
 @app.post('/anonymize/', tags=["Anonymization"])
-def anonymize(image: UploadFile = File(...), configuration: UploadFile = File(...)):
+def anonymize(image: UploadFile = File(...), configuration: UploadFile = File(...), quality: int = 90):
     """
     Anonymize the given image
     :param image: Image file
     :param configuration: Json file
+    :param quality: Quality of the output image (default is 90)
     :return: The anonymized image
     """
     try:
         result, errors = anonymizationservice.anonymize(image, configuration)
         if not errors:
-            _, im_png = cv2.imencode(".png", result)
-            response = StreamingResponse(io.BytesIO(im_png.tobytes()), media_type="image/jpeg")
+            encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), quality]
+            _, img = cv2.imencode(".jpg", result, encode_param)
+            response = StreamingResponse(io.BytesIO(img.tobytes()), media_type="image/jpeg")
             return response
         else:
             return ApiResponse(success=False,
