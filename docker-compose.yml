@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     image: openvino_detection.api:latest
     networks:
-      - anonym-net
+      - proxiable
     ports:
       - "8081:80"
     volumes:
@@ -20,7 +20,7 @@ services:
       dockerfile: docker/Dockerfile
     image: openvino_segmentation.api:latest
     networks:
-      - anonym-net
+      - proxiable
     ports:
       - "8090:80"
     volumes:
@@ -33,7 +33,7 @@ services:
       context: .
       dockerfile: docker/dockerfile
     networks:
-      - anonym-net
+      - proxiable
     ports:
       - "8070:4343"
     volumes:
@@ -43,5 +43,7 @@ services:
       - openvino_detection_api
       - openvino_segmentation_api
 
-networks: 
-  anonym-net:
+networks:
+  proxiable:
+    name: proxiable
+    external: true
